@@ -1,4 +1,6 @@
 from collections import defaultdict
+from heapq import heapify, heappop
+import math
 import random
 
 
@@ -78,6 +80,25 @@ def print_nonzero(space):
       if val != 0:
         print(val)
 
+def pythagorean_search(space, row: int, col: int, radius: int):
+  min_heap = []
+  for r in range(len(space)):
+    for c in range(len(space[0])):
+      if space[r][c] == 0:
+        continue
+      dist = math.hypot(abs(row - r), abs(col - c))
+      min_heap.append((dist, space[r][c]))
+  heapify(min_heap)
+  results = []
+  while min_heap:
+    dist, point = heappop(min_heap)
+    if dist > radius:
+      break
+    else:
+      results.append(point)
+  return results
+
+
 def main():
   # Setup & construct HList.
   space = create_space_256()
@@ -96,12 +117,30 @@ def main():
   search_row = 90
   search_col = 12
   search_h_width = 3
-  print("Results near (90, 12):")
-  for result in hlist.search_near(search_row, search_col, search_h_width):
+  hilbert_results = hlist.search_near(search_row, search_col, search_h_width)
+  print("Hilbert results near (90, 12): (" \
+        + str(len(hilbert_results)) + ") results")
+  for result in hilbert_results:
     print(result)
- 
+
+  # Compare to Pythagorean/heap results.
+  # We use a radius of 64 because it's 1.5 node_sizes.
+  pythagorean_results = pythagorean_search(space, search_row, search_col, 96)
+  print("Pythagorean results near (90, 12): (" \
+        + str(len(pythagorean_results)) + ") results")
+  for result in pythagorean_results:
+    print(result)
+  pythagorean_set = set(pythagorean_results)
+  hilbert_set = set(hilbert_results)
+  matches = hilbert_set & pythagorean_set
+  print("Similarities: (" + str(len(matches)) + ") results")
+  for point in matches:
+    print(point)
+
+
+  
+
 
 if __name__ == "__main__":
   main()
-
 
