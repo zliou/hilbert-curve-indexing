@@ -1,6 +1,7 @@
 from collections import defaultdict
 from heapq import heapify, heappop
 import math
+import matplotlib.pyplot as plt
 import random
 
 
@@ -98,6 +99,19 @@ def pythagorean_search(space, row: int, col: int, radius: int):
       results.append(point)
   return results
 
+# Translate list<point: str> to tuple<list<int>, list<int>>.
+def translate_points_to_xy(points):
+  X = []
+  Y = []
+  for point in points:
+    x, y = point.split(", ")
+    X.append(int(x))
+    Y.append(int(y))
+  return (X, Y)
+
+def plot_set(points, color="gray", label="uncategorized"):
+  X, Y = translate_points_to_xy(points)
+  plt.scatter(X, Y, c=color, label=label)
 
 def main():
   # Setup & construct HList.
@@ -114,31 +128,30 @@ def main():
   generate_points(space, 100)
   
   # Search and print results.
-  search_row = 90
-  search_col = 12
+  search_row = 128 
+  search_col = 128
   search_h_width = 3
   hilbert_results = hlist.search_near(search_row, search_col, search_h_width)
-  print("Hilbert results near (90, 12): (" \
-        + str(len(hilbert_results)) + ") results")
-  for result in hilbert_results:
-    print(result)
 
   # Compare to Pythagorean/heap results.
-  # We use a radius of 64 because it's 1.5 node_sizes.
+  # We use a radius of 96 because it's 1.5 node_sizes.
   pythagorean_results = pythagorean_search(space, search_row, search_col, 96)
-  print("Pythagorean results near (90, 12): (" \
-        + str(len(pythagorean_results)) + ") results")
-  for result in pythagorean_results:
-    print(result)
   pythagorean_set = set(pythagorean_results)
   hilbert_set = set(hilbert_results)
   matches = hilbert_set & pythagorean_set
-  print("Similarities: (" + str(len(matches)) + ") results")
-  for point in matches:
-    print(point)
 
-
-  
+  # Plot points.
+  plot_set(pythagorean_set, color="red", label="pythagorean")
+  plot_set(hilbert_set, color="blue", label="hilbert")
+  plot_set(matches, color="green", label="match")
+  plt.scatter([search_row], [search_col], c="yellow", label="center")
+  title = "Search comparison: points near (" \
+            + str(search_row) + ", " +  str(search_col) + ")"
+  plt.title(title)
+  plt.xlim([0, 256])
+  plt.ylim([0, 256])
+  plt.legend()
+  plt.show()
 
 
 if __name__ == "__main__":
