@@ -113,6 +113,11 @@ def plot_set(points, color="gray", label="uncategorized"):
   X, Y = translate_points_to_xy(points)
   plt.scatter(X, Y, c=color, label=label)
 
+def get_search_xy():
+  search_x = int(input("(Between 0 and 255) Search at x: "))
+  search_y = int(input("(Between 0 and 255) Search at y: "))
+  return (search_x, search_y)
+
 def main():
   # Setup & construct HList.
   space = create_space_256()
@@ -128,8 +133,7 @@ def main():
   generate_points(space, 100)
   
   # Search and print results.
-  search_row = 128 
-  search_col = 128
+  search_row, search_col = get_search_xy()
   search_h_width = 3
   hilbert_results = hlist.search_near(search_row, search_col, search_h_width)
 
@@ -141,16 +145,19 @@ def main():
   matches = hilbert_set & pythagorean_set
 
   # Plot points.
-  plot_set(pythagorean_set, color="red", label="pythagorean")
-  plot_set(hilbert_set, color="blue", label="hilbert")
+  plot_set(pythagorean_set, color="red", label="Pythagorean")
+  plot_set(hilbert_set, color="blue", label="Hilbert")
   plot_set(matches, color="green", label="match")
-  plt.scatter([search_row], [search_col], c="yellow", label="center")
+  plt.scatter([search_row], [search_col], c="orange", label="center")
   title = "Search comparison: points near (" \
             + str(search_row) + ", " +  str(search_col) + ")"
   plt.title(title)
   plt.xlim([0, 256])
   plt.ylim([0, 256])
   plt.legend()
+  print(len(pythagorean_set), "Pythagorean points.")
+  print(len(hilbert_set), "Hilbert points.")
+  print(len(matches), "matching points.")
   plt.show()
 
 
