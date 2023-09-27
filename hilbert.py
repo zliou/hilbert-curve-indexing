@@ -141,9 +141,11 @@ def get_search_xy():
 def main():
   # Setup & construct HList.
   space = create_space_256()
-  points = pregenerated_depth_2()
-  depth_2_node_size = 64
-  hlist = HList(space, depth_2_node_size)
+  #points = pregenerated_depth_2()
+  #depth_2_node_size = 64
+  points = pregenerated_depth_3()
+  depth_3_node_size = 32 
+  hlist = HList(space, depth_3_node_size)
   
   # Add nodes into HList.
   for row, col in points:
@@ -154,7 +156,7 @@ def main():
   
   # Search and print results.
   search_row, search_col = get_search_xy()
-  search_h_width = 3
+  search_h_width = 10 
   hilbert_results = hlist.search_near(search_row, search_col, search_h_width)
 
   # Compare to Pythagorean/heap results.
@@ -176,7 +178,7 @@ def main():
   plt.ylim([0, 256])
   plt.legend()
   print(len(matches), "matching points.")
-  print(len(pythagorean_set), "Pythagorean points. (")
+  print(len(pythagorean_set), "Pythagorean points.")
   print(len(hilbert_set), "Hilbert points.")
   plt.show()
 
