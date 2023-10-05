@@ -29,6 +29,9 @@ class HList():
     self.node_size = node_size
     self.indexes = defaultdict()
 
+  def add_mirror_node(self, row: int, col: int):
+    self.add_node(col, row)  # Mirror the node around the y = x line.
+
   def add_node(self, row: int, col: int):
     index = len(self.nodes)
     self.indexes[(row, col)] = index
